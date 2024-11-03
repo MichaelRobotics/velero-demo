@@ -10,7 +10,7 @@ def apply_velero [provider: string, storage_name: string] {
                 --bucket $storage_name
                 --backup-location-config region=us-east-1
                 --snapshot-location-config region=us-east-1
-                --secret-file ./aws-creds.conf
+                --secret-file ./aws-creds.conf --output yaml
         )
 
     } else {

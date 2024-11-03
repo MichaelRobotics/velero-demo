@@ -5,6 +5,7 @@ source scripts/kubernetes.nu
 source scripts/ingress.nu
 source scripts/storage.nu
 source scripts/velero.nu
+source scripts/argocd.nu
 
 let hyperscaler = get-hyperscaler
 
@@ -17,6 +18,17 @@ let ingress_data = apply_ingress $hyperscaler
 let storage_data = create_storage $hyperscaler
 
 apply_velero $hyperscaler $storage_data.name
+
+let git_url = git config --get remote.origin.url
+
+open apps/silly-demo.yaml
+    | upsert spec.source.repoURL $git_url
+    | save apps/silly-demo.yaml --force
+
+apply_argocd $"argocd.($ingress_data.host)"
+
+
+
 
 (
     helm upgrade --install cnpg cloudnative-pg
