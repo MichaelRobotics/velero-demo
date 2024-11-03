@@ -1,0 +1,46 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  labels:
+    app.kubernetes.io/name: silly-demo
+  name: silly-demo
+spec:
+  instances: 1
+  storage:
+    size: 1Gi
+---
+apiVersion: db.atlasgo.io/v1alpha1
+kind: AtlasSchema
+metadata:
+  labels:
+    app.kubernetes.io/name: silly-demo
+  name: silly-demo-videos
+spec:
+  credentials:
+    database: app
+    host: silly-demo-rw.a-team
+    parameters:
+      sslmode: disable
+    passwordFrom:
+      secretKeyRef:
+        key: password
+        name: silly-demo-app
+    port: 5432
+    scheme: postgres
+    user: app
+  schema:
+    sql: |
+      create table videos (
+        id varchar(50) not null,
+        title text,
+        primary key (id)
+      );
+      create table comments (
+        id serial,
+        video_id varchar(50) not null,
+        description text not null,
+        primary key (id),
+        CONSTRAINT fk_videos FOREIGN KEY(video_id) REFERENCES videos(id)
+      );
+---
