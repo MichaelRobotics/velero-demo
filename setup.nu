@@ -27,7 +27,13 @@ open apps/silly-demo.yaml
 
 apply_argocd $"argocd.($ingress_data.host)"
 
+git add .
 
+git commit -m "Customizations"
+
+git push
+
+kubectl create namespace a-team
 
 
 (
@@ -41,8 +47,6 @@ apply_argocd $"argocd.($ingress_data.host)"
         oci://ghcr.io/ariga/charts/atlas-operator
         --namespace atlas-operator --create-namespace --wait
 )
-
-kubectl create namespace a-team
 
 open app/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"

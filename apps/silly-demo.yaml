@@ -8,10 +8,10 @@ spec:
   source:
     repoURL: https://github.com/vfarcic/velero-demo
     targetRevision: HEAD
-    path: yaml/prod
+    path: app
   destination:
     server: https://kubernetes.default.svc
-    namespace: production
+    namespace: a-team
   syncPolicy:
     automated:
       selfHeal: true
