@@ -19,6 +19,22 @@ let storage_data = create_storage $hyperscaler
 
 apply_velero $hyperscaler $storage_data.name
 
+(
+    helm upgrade --install cnpg cloudnative-pg
+        --repo https://cloudnative-pg.github.io/charts
+        --namespace cnpg-system --create-namespace --wait
+)
+
+(
+    helm upgrade --install atlas-operator
+        oci://ghcr.io/ariga/charts/atlas-operator
+        --namespace atlas-operator --create-namespace --wait
+)
+
+open app/ingress.yaml
+    | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
+    | save app/ingress.yaml --force
+
 let git_url = git config --get remote.origin.url
 
 open apps/silly-demo.yaml
@@ -36,23 +52,9 @@ git push
 kubectl create namespace a-team
 
 
-(
-    helm upgrade --install cnpg cloudnative-pg
-        --repo https://cloudnative-pg.github.io/charts
-        --namespace cnpg-system --create-namespace --wait
-)
 
-(
-    helm upgrade --install atlas-operator
-        oci://ghcr.io/ariga/charts/atlas-operator
-        --namespace atlas-operator --create-namespace --wait
-)
 
-open app/ingress.yaml
-    | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
-    | save app/ingress.yaml --force
 
-kubectl --namespace a-team apply --filename app/
 
 (
     kubectl --namespace a-team wait --for=condition=ready pod

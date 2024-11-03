@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: silly-demo.52.54.160.36.nip.io
+  - host: silly-demo.3.209.38.114.nip.io
     http:
       paths:
       - backend:
