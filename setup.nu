@@ -31,9 +31,12 @@ git add .
 
 git commit -m "Customizations"
 
-git push        
+git push
 
-apply_argocd $"argocd.($ingress_data.host)"
+apply_argocd
+
+
+
 
 
 let ingress_data = apply_ingress $hyperscaler
@@ -47,6 +50,8 @@ git add .
 git commit -m "Customizations"
 
 git push
+
+apply_argocd $"argocd.($ingress_data.host)"
 
 sleep 15sec
 

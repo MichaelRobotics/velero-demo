@@ -1,13 +1,17 @@
 #!/usr/bin/env nu
 
-def apply_argocd [host_name: string, ingress_class_name = "traefik"] {
+def apply_argocd [host_name = "", ingress_class_name = "traefik"] {
 
     let git_url = git config --get remote.origin.url
 
-    open argocd-values.yaml
-        | upsert server.ingress.ingressClassName $ingress_class_name
-        | upsert server.ingress.hostname $host_name
-        | save argocd-values.yaml --force
+    if host_name != "" {
+
+        open argocd-values.yaml
+            | upsert server.ingress.ingressClassName $ingress_class_name
+            | upsert server.ingress.hostname $host_name
+            | save argocd-values.yaml --force
+
+    }
 
     open argocd-app.yaml
         | upsert spec.source.repoURL $git_url

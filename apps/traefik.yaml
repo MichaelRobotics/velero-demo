@@ -9,7 +9,7 @@ spec:
   source:
     chart: traefik
     repoURL: https://helm.traefik.io/traefik
-    targetRevision: 1.38.0
+    targetRevision: 33.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
