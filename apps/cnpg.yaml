@@ -1,19 +1,22 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: silly-demo
+  name: cnpg
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/velero-demo
-    targetRevision: HEAD
-    path: app
+    chart: cloudnative-pg
+    repoURL: https://cloudnative-pg.github.io/charts
+    targetRevision: 0.22.1
   destination:
     server: https://kubernetes.default.svc
-    namespace: a-team
+    namespace: cnpg-system
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
       allowEmpty: true
+    syncOptions:
+      - CreateNamespace=true

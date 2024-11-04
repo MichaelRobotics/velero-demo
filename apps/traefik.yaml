@@ -1,19 +1,22 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: silly-demo
+  name: traefik
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/velero-demo
-    targetRevision: HEAD
-    path: app
+    chart: traefik
+    repoURL: https://helm.traefik.io/traefik
+    targetRevision: 1.38.0
   destination:
     server: https://kubernetes.default.svc
-    namespace: a-team
+    namespace: traefik
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
       allowEmpty: true
+    syncOptions:
+      - CreateNamespace=true

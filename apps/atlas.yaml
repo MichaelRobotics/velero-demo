@@ -1,19 +1,22 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: silly-demo
+  name: atlas-operator
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/velero-demo
-    targetRevision: HEAD
-    path: app
+    chart: atlas-operator
+    repoURL: oci://ghcr.io/ariga/charts/atlas-operator
+    targetRevision: 0.6.1
   destination:
     server: https://kubernetes.default.svc
-    namespace: a-team
+    namespace: atlas-operator
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
       allowEmpty: true
+    syncOptions:
+      - CreateNamespace=true

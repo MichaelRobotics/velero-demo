@@ -9,29 +9,13 @@ source scripts/argocd.nu
 
 let hyperscaler = get-hyperscaler
 
-create_kubernetes $hyperscaler "dot" 1 2
+create_kubernetes $hyperscaler "dot2" 1 2
 
-let ingress_data = apply_ingress $hyperscaler
+create_kubernetes $hyperscaler "dot" 1 2
 
 let storage_data = create_storage $hyperscaler
 
 apply_velero $hyperscaler $storage_data.name
-
-(
-    helm upgrade --install cnpg cloudnative-pg
-        --repo https://cloudnative-pg.github.io/charts
-        --namespace cnpg-system --create-namespace --wait
-)
-
-(
-    helm upgrade --install atlas-operator
-        oci://ghcr.io/ariga/charts/atlas-operator
-        --namespace atlas-operator --create-namespace --wait
-)
-
-open app/ingress.yaml
-    | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
-    | save app/ingress.yaml --force
 
 let git_url = git config --get remote.origin.url
 
@@ -47,9 +31,22 @@ git add .
 
 git commit -m "Customizations"
 
-git push
+git push        
 
 apply_argocd $"argocd.($ingress_data.host)"
+
+
+let ingress_data = apply_ingress $hyperscaler
+
+open app/ingress.yaml
+    | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
+    | save app/ingress.yaml --force
+
+git add .
+
+git commit -m "Customizations"
+
+git push
 
 sleep 15sec
 
