@@ -9,8 +9,6 @@ source scripts/argocd.nu
 
 let hyperscaler = get-hyperscaler
 
-create_kubernetes $hyperscaler "dot2" 1 2
-
 create_kubernetes $hyperscaler "dot" 1 2
 
 let ingress_data = apply_ingress $hyperscaler
@@ -40,6 +38,10 @@ let git_url = git config --get remote.origin.url
 open apps/silly-demo.yaml
     | upsert spec.source.repoURL $git_url
     | save apps/silly-demo.yaml --force
+
+open apps/crossplane-providers.yaml
+    | upsert spec.source.repoURL $git_url
+    | save apps/crossplane-providers.yaml --force
 
 git add .
 

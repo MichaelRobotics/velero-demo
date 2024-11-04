@@ -48,11 +48,13 @@ def destroy_storage [provider: string, storage_name: string] {
         (
             aws iam delete-access-key --user-name velero
                 --access-key-id $env.STORAGE_ACCESS_KEY_ID
+                --region us-east-1
         )
 
         (
             aws iam delete-user-policy --user-name velero
                 --policy-name velero
+                --region us-east-1
         )
 
         aws iam delete-user --user-name velero
