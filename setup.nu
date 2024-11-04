@@ -38,6 +38,16 @@ apply_argocd
 
 
 
+(
+    helm upgrade --install cnpg cloudnative-pg
+        --repo https://cloudnative-pg.github.io/charts
+        --namespace cnpg-system --create-namespace --wait
+)
+
+
+
+
+
 
 let ingress_data = apply_ingress $hyperscaler
 
