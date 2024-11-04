@@ -27,6 +27,13 @@ open apps/crossplane-providers.yaml
     | upsert spec.source.repoURL $git_url
     | save apps/crossplane-providers.yaml --force
 
+
+(
+    helm upgrade --install cnpg cloudnative-pg
+        --repo https://cloudnative-pg.github.io/charts
+        --namespace cnpg-system --create-namespace --wait
+)
+    
 git add .
 
 git commit -m "Customizations"
@@ -35,21 +42,8 @@ git push
 
 apply_argocd
 
+let ingress_data = get_ingress_data $hyperscaler
 
-
-
-(
-    helm upgrade --install cnpg cloudnative-pg
-        --repo https://cloudnative-pg.github.io/charts
-        --namespace cnpg-system --create-namespace --wait
-)
-
-
-
-
-
-
-let ingress_data = apply_ingress $hyperscaler
 
 open app/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"

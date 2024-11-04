@@ -50,9 +50,14 @@ def apply_ingress [provider: string, type = "traefik"] {
 
     }
 
-    mut ingress_ip = ""
+    get_ingress_data $provider $type
 
-    
+}
+
+def get_ingress_data [provider: string, type = "traefik"] {
+
+    mut ingress_ip = ""
+  
     if $provider == "aws" {
 
         sleep 10sec
