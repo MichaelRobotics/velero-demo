@@ -41,20 +41,15 @@ open apps/silly-demo.yaml
     | upsert spec.source.repoURL $git_url
     | save apps/silly-demo.yaml --force
 
-apply_argocd $"argocd.($ingress_data.host)"
-
 git add .
 
 git commit -m "Customizations"
 
 git push
 
-kubectl create namespace a-team
+apply_argocd $"argocd.($ingress_data.host)"
 
-
-
-
-
+sleep 15sec
 
 (
     kubectl --namespace a-team wait --for=condition=ready pod
