@@ -65,6 +65,8 @@ sleep 5sec
         --selector app.kubernetes.io/instance=silly-demo-videos-atlas-dev-db
 )
 
+sleep 5sec
+
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=1&title=Video1"
 
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=2&title=Video2"
