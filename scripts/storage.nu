@@ -2,12 +2,10 @@
 
 def create_storage [provider: string] {
 
-    mut bucket = ""
+    let bucket = $"dot-(date now | format date "%Y%m%d%H%M%S")"
+    $"export STORAGE_NAME=($bucket)\n" | save --append .env
 
     if $provider == "aws" {
-
-        $bucket = $"dot-(date now | format date "%Y%m%d%H%M%S")"
-        $"export STORAGE_NAME=($bucket)\n" | save --append .env
 
         (
             aws s3api create-bucket --bucket $bucket
@@ -29,6 +27,10 @@ def create_storage [provider: string] {
         )
         $"export STORAGE_ACCESS_KEY_ID=($access_key_id)\n"
             | save --append .env
+
+    # } else if $provider == "google" {
+
+    #     gsutil mb $"gs://($bucket)/"
 
     } else {
 

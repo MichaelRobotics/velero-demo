@@ -7,18 +7,24 @@ def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_
 
     if $provider == "google" {
 
-        let project_id = $"dot-(date now | format date "%Y%m%d%H%M%S")"
-        $"export PROJECT_ID=($project_id)\n" | save --append .env
+        mut project_id = ""
+        if PROJECT_ID in $env {
+            $project_id = $env.PROJECT_ID
+        } else {
+            $project_id = $"dot-(date now | format date "%Y%m%d%H%M%S")"
+            $env.PROJECT_ID = $project_id
+            $"export PROJECT_ID=($project_id)\n" | save --append .env
 
-        gcloud projects create $project_id
+            gcloud projects create $project_id
 
-        start $"https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=($project_id)"
-
-        print $"(ansi yellow_bold)
-ENABLE(ansi reset) the API.
-Press any key to continue.
-"
-        input
+            start $"https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=($project_id)"
+    
+            print $"(ansi yellow_bold)
+            ENABLE(ansi reset) the API.
+            Press any key to continue.
+            "
+            input    
+        }
 
         (
             gcloud container clusters create $name --project $project_id
