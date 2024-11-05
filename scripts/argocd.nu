@@ -13,9 +13,13 @@ def apply_argocd [host_name = "", ingress_class_name = "traefik"] {
 
     }
 
-    open argocd-app.yaml
+    open argocd-apps.yaml
         | upsert spec.source.repoURL $git_url
-        | save argocd-app.yaml --force
+        | save argocd-apps.yaml --force
+
+    open argocd-third-party.yaml
+        | upsert spec.source.repoURL $git_url
+        | save argocd-third-party.yaml --force
 
     (
         helm upgrade --install argocd argo-cd
@@ -24,6 +28,8 @@ def apply_argocd [host_name = "", ingress_class_name = "traefik"] {
             --values argocd-values.yaml --wait
     )
 
-    kubectl apply --filename argocd-app.yaml
+    kubectl apply --filename argocd-apps.yaml
+
+    kubectl apply --filename argocd-third-party.yaml
 
 }
