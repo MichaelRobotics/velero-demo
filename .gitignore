@@ -1,3 +1,5 @@
 /.env
 /aws-creds.conf
 /kubeconfig*.yaml
+/google-creds.json
+/gke_gcloud_auth_plugin_cache

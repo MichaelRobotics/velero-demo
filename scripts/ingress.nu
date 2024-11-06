@@ -56,11 +56,12 @@ def apply_ingress [provider: string, type = "traefik", env_prefix = ""] {
 
 def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
 
+    sleep 10sec
+    
     mut ingress_ip = ""
   
     if $provider == "aws" {
-
-        sleep 10sec
+        print "111"
 
         let ingress_hostname = (
             kubectl --namespace traefik
@@ -76,10 +77,13 @@ def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
         }
 
     } else if $provider == "kind" {
+        print "222"
 
         $ingress_ip = "127.0.0.1"
 
     } else {
+
+        print "333"
 
         while $ingress_ip == "" {
             print "Waiting for Ingress Service IP..."

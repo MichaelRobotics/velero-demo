@@ -28,9 +28,42 @@ def create_storage [provider: string] {
         $"export STORAGE_ACCESS_KEY_ID=($access_key_id)\n"
             | save --append .env
 
-    # } else if $provider == "google" {
+    } else if $provider == "google" {
 
-    #     gsutil mb $"gs://($bucket)/"
+        (
+            gcloud storage buckets create $"gs://($bucket)"
+                --project $env.PROJECT_ID --location us-east1
+        )
+
+        (
+            gcloud iam service-accounts create velero
+                --project $env.PROJECT_ID --display-name "Velero"
+        )
+
+        let sa_email = $"velero@($env.PROJECT_ID).iam.gserviceaccount.com"
+
+        (
+            gcloud iam roles create velero.server
+                --project $env.PROJECT_ID
+                --file google-permissions.yaml
+        )
+
+        (
+            gcloud projects add-iam-policy-binding $env.PROJECT_ID
+                --member $"serviceAccount:($sa_email)"
+                --role $"projects/($env.PROJECT_ID)/roles/velero.server"
+        )
+
+        (
+            gsutil iam ch
+                $"serviceAccount:($sa_email):objectAdmin"
+                $"gs://($bucket)"
+        )
+
+        (
+            gcloud iam service-accounts keys create
+                google-creds.json --iam-account $sa_email
+        )
 
     } else {
 

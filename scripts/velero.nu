@@ -13,6 +13,15 @@ def apply_velero [provider: string, storage_name: string] {
                 --secret-file ./aws-creds.conf --output yaml
         )
 
+    } else if $provider == "google" {
+
+        (
+            velero install --provider gcp
+                --plugins velero/velero-plugin-for-gcp:v1.11.0
+                --bucket $storage_name
+                --secret-file ./google-creds.json --output yaml
+        )
+
     } else {
 
         print $"(ansi red_bold)($provider)(ansi reset) is not a supported."

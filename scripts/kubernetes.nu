@@ -7,6 +7,8 @@ def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_
 
     if $provider == "google" {
 
+        gcloud auth login
+
         mut project_id = ""
         if PROJECT_ID in $env {
             $project_id = $env.PROJECT_ID
@@ -137,7 +139,7 @@ def destroy_kubernetes [provider: string, name = "dot"] {
 
     if $provider == "google" {
 
-        rm kubeconfig.yaml
+        rm --force kubeconfig.yaml
 
         (
             gcloud container clusters delete $name

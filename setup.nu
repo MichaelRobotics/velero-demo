@@ -8,8 +8,6 @@ source scripts/velero.nu
 
 let hyperscaler = get-hyperscaler
 
-let git_url = git config --get remote.origin.url
-
 create_kubernetes $hyperscaler "dot2" 1 2
 
 let storage_data = create_storage $hyperscaler
