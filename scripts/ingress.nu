@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-def apply_ingress [provider: string, type = "traefik"] {
+def apply_ingress [provider: string, type = "traefik", env_prefix = ""] {
 
     if $type == "traefik" {
 
@@ -50,11 +50,11 @@ def apply_ingress [provider: string, type = "traefik"] {
 
     }
 
-    get_ingress_data $provider $type
+    get_ingress_data $provider $type $env_prefix
 
 }
 
-def get_ingress_data [provider: string, type = "traefik"] {
+def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
 
     mut ingress_ip = ""
   
@@ -95,8 +95,8 @@ def get_ingress_data [provider: string, type = "traefik"] {
 
     $ingress_ip = $ingress_ip | lines | first
 
-    $"export INGRESS_IP=($ingress_ip)\n" | save --append .env
-    $"export INGRESS_HOST=($ingress_ip).nip.io\n" | save --append .env
+    $"export ($env_prefix)INGRESS_IP=($ingress_ip)\n" | save --append .env
+    $"export ($env_prefix)INGRESS_HOST=($ingress_ip).nip.io\n" | save --append .env
 
     {ip: $ingress_ip, host: $"($ingress_ip).nip.io", class: $type}
 

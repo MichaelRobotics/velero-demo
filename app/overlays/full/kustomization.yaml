@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - db.yaml
+patches:
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: silly-demo
+    spec:
+      template:
+        spec:
+          containers:
+          - name: silly-demo
+            env:
+            - name: DB_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  key: host
+                  name: silly-demo-app
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: port
+                  name: silly-demo-app
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: silly-demo-app
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: silly-demo-app
+            - name: DB_NAME
+              value: app

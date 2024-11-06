@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/name: silly-demo
   name: silly-demo
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: silly-demo
@@ -21,30 +21,7 @@ spec:
         app.kubernetes.io/name: silly-demo
     spec:
       containers:
-      - env:
-        - name: DB_ENDPOINT
-          valueFrom:
-            secretKeyRef:
-              key: host
-              name: silly-demo-app
-        - name: DB_PORT
-          valueFrom:
-            secretKeyRef:
-              key: port
-              name: silly-demo-app
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: silly-demo-app
-        - name: DB_PASS
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: silly-demo-app
-        - name: DB_NAME
-          value: app
-        image: ghcr.io/vfarcic/silly-demo:1.4.298
+      - image: ghcr.io/vfarcic/silly-demo:1.4.301
         livenessProbe:
           httpGet:
             path: /

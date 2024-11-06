@@ -1,0 +1,13 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: every-5-min
+spec:
+  schedule: '*/5 * * * *'
+  skipImmediately: false
+  template:
+    excludedNamespaces:
+    - default
+    - kube-node-lease
+    - kube-public
+    - kube-system
