@@ -113,6 +113,70 @@
         }
       }
     },
+    "azure-cli@2.64.0": {
+      "last_modified": "2024-10-09T02:21:25Z",
+      "resolved": "github:NixOS/nixpkgs/2b58bfe2c0d73341362870a0f1e50b2b8f2e4b84#azure-cli",
+      "source": "devbox-search",
+      "version": "2.64.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ddp95wyfxh51ca6yxvnrdd26800l6fds-python3.12-azure-cli-2.64.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/kyjlb1hbfig8svacdpknhckg1ka3rjj0-python3.12-azure-cli-2.64.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/ddp95wyfxh51ca6yxvnrdd26800l6fds-python3.12-azure-cli-2.64.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/924nn53vqhn3qgcc57jb6pigf6hxpbh3-python3.12-azure-cli-2.64.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/lpsaz1winpxb1vfydfsf5b3i3dji6cg8-python3.12-azure-cli-2.64.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/924nn53vqhn3qgcc57jb6pigf6hxpbh3-python3.12-azure-cli-2.64.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ig9p45ldajp1hwzzsayqdwyjl1cw5g66-python3.12-azure-cli-2.64.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/ni52zs6g3dfnhw4b1sm9h29hzzf211ld-python3.12-azure-cli-2.64.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/ig9p45ldajp1hwzzsayqdwyjl1cw5g66-python3.12-azure-cli-2.64.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3l4f49whgdp4z97qbp8asj925cp94yp9-python3.12-azure-cli-2.64.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/2zkqmqjbb2hc1425yqmlfvbmc9ahl4hs-python3.12-azure-cli-2.64.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/3l4f49whgdp4z97qbp8asj925cp94yp9-python3.12-azure-cli-2.64.0"
+        }
+      }
+    },
     "crossplane-cli@1.17.1": {
       "last_modified": "2024-10-13T23:44:06Z",
       "resolved": "github:NixOS/nixpkgs/d4f247e89f6e10120f911e2e2d2254a050d0f732#crossplane-cli",

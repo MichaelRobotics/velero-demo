@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-def create_storage [provider: string] {
+def create_storage [provider: string, auth = true] {
 
     let bucket = $"dot-(date now | format date "%Y%m%d%H%M%S")"
     $"export STORAGE_NAME=($bucket)\n" | save --append .env
@@ -29,6 +29,10 @@ def create_storage [provider: string] {
             | save --append .env
 
     } else if $provider == "google" {
+
+        if $auth {
+            gcloud auth login
+        }
 
         (
             gcloud storage buckets create $"gs://($bucket)"
@@ -65,6 +69,61 @@ def create_storage [provider: string] {
                 google-creds.json --iam-account $sa_email
         )
 
+    } else if $provider == "azure" {
+
+        let sa_id = $"velero(uuidgen | cut -d '-' -f5 | tr '[A-Z]' '[a-z]')"
+        $"export AZURE_SA_ID=($sa_id)\n" | save --append .env
+
+        (
+            az storage account create
+                --name $sa_id
+                --resource-group $env.RESOURCE_GROUP
+                --sku Standard_GRS --encryption-services blob
+                --https-only true --min-tls-version TLS1_2
+                --kind BlobStorage --access-tier Hot
+        )
+
+        (
+            az storage container create --name velero
+                --public-access off --account-name $sa_id
+                --resource-group $env.RESOURCE_GROUP
+        )
+
+        let subscription_id = (az account list 
+            --query '[?isDefault].id' --output tsv)
+
+        open azure-permissions.json
+            | upsert AssignableScopes.0 $"/subscriptions/($subscription_id)"
+            | save azure-permissions.json --force
+
+        (
+            az role definition create
+                --role-definition azure-permissions.json
+                --resource-group $env.RESOURCE_GROUP
+        )
+
+        let tenant_id = (az account list
+            --query '[?isDefault].tenantId' --output tsv)
+        
+        let client_secret = (az ad sp create-for-rbac
+            --name velero --role Velero --query 'password'
+            --output tsv
+            --scopes  $"/subscriptions/($subscription_id)"
+            --resource-group $env.RESOURCE_GROUP
+        )
+
+        let client_id = (az ad sp list --display-name "velero"
+            --query '[0].appId' --output tsv)
+        $"export AZURE_CLIENT_ID=($client_id)\n"
+            | save --append .env
+
+        $"AZURE_SUBSCRIPTION_ID=($subscription_id)
+AZURE_TENANT_ID=($tenant_id)
+AZURE_CLIENT_ID=($client_id)
+AZURE_CLIENT_SECRET=($client_secret)
+AZURE_RESOURCE_GROUP=($env.RESOURCE_GROUP)
+AZURE_CLOUD_NAME=AzurePublicCloud" | save azure-creds.env --force
+
     } else {
 
         print $"(ansi red_bold)($provider)(ansi reset) is not a supported."
@@ -76,7 +135,7 @@ def create_storage [provider: string] {
 
 }
 
-def destroy_storage [provider: string, storage_name: string] {
+def destroy_storage [provider: string, storage_name: string, delete_project = true] {
 
     if $provider == "aws" {
 
@@ -103,6 +162,34 @@ def destroy_storage [provider: string, storage_name: string] {
             aws s3api delete-bucket --bucket $storage_name
                 --region us-east-1
         )
+    
+    } else if $provider == "google" {
+
+        (
+            gcloud storage rm $"gs://($storage_name)" --recursive
+                --project $env.PROJECT_ID
+        )
+
+        if $delete_project {
+            gcloud projects delete $env.PROJECT_ID --quiet
+        }
+
+    } else if $provider == "azure" {
+
+        (
+            az storage container delete --name velero
+                --account-name $env.AZURE_SA_ID
+        )
+
+        (
+            az storage account delete
+                --name $env.AZURE_SA_ID
+                --resource-group $env.RESOURCE_GROUP --yes
+        )
+
+        az ad sp delete --id $env.AZURE_CLIENT_ID
+        
+        az role definition delete --name Velero
 
     } else {
 

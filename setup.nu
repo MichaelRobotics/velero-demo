@@ -8,15 +8,15 @@ source scripts/velero.nu
 
 let hyperscaler = get-hyperscaler
 
-create_kubernetes $hyperscaler "dot2" 1 2
+create_kubernetes $hyperscaler "dot2" 1 2 true
 
-let storage_data = create_storage $hyperscaler
+let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
 
 let ingress_data = apply_ingress $hyperscaler "traefik" "DOT2_"
 
-create_kubernetes $hyperscaler "dot" 1 2
+create_kubernetes $hyperscaler "dot" 1 2 false
 
 apply_velero $hyperscaler $storage_data.name
 
@@ -30,7 +30,12 @@ kubectl apply --filename third-party/namespace-a-team.yaml
 
 kubectl --namespace a-team apply --kustomize app/overlays/minimal
 
-sleep 10sec
+sleep 5sec
+
+(
+    kubectl --namespace a-team wait --for=condition=Ready
+        pods --selector app.kubernetes.io/name=silly-demo
+)
 
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=1&title=Video1"
 

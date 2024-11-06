@@ -1,13 +1,15 @@
 #!/usr/bin/env nu
 
-def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_nodes = 4] {
+def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_nodes = 4, auth = true] {
 
     $env.KUBECONFIG = $"($env.PWD)/kubeconfig-($name).yaml"
     $"export KUBECONFIG=($env.KUBECONFIG)\n" | save --append .env
 
     if $provider == "google" {
 
-        gcloud auth login
+        if $auth {
+            gcloud auth login
+        }
 
         mut project_id = ""
         if PROJECT_ID in $env {
@@ -22,10 +24,10 @@ def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_
             start $"https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=($project_id)"
     
             print $"(ansi yellow_bold)
-            ENABLE(ansi reset) the API.
-            Press any key to continue.
-            "
-            input    
+ENABLE(ansi reset) the API.
+Press any key to continue.
+"
+            input
         }
 
         (
@@ -91,20 +93,27 @@ aws_secret_access_key = ($aws_secret_access_key)
     } else if $provider == "azure" {
 
         mut tenant_id = ""
+        let location = "eastus"
+
         if AZURE_TENANT in $env {
             $tenant_id = $env.AZURE_TENANT
         } else {
             $tenant_id = input $"(ansi green_bold)Enter Azure Tenant ID: (ansi reset)"
         }
 
-        az login --tenant $tenant_id
+        if $auth {
+            az login --tenant $tenant_id
+        }
 
-        let resource_group = $"dot-(date now | format date "%Y%m%d%H%M%S")"
-        $"export RESOURCE_GROUP=($resource_group)\n" | save --append .env
-
-        let location = "eastus"
-
-        az group create --name $resource_group --location $location
+        mut resource_group = ""
+        if RESOURCE_GROUP in $env {
+            $resource_group = $env.RESOURCE_GROUP
+        } else {
+            $resource_group = $"dot-(date now | format date "%Y%m%d%H%M%S")"
+            $env.RESOURCE_GROUP = $resource_group
+            $"export RESOURCE_GROUP=($resource_group)\n" | save --append .env
+            az group create --name $resource_group --location $location
+        }
 
         (
             az aks create --resource-group $resource_group --name $name
@@ -135,7 +144,7 @@ aws_secret_access_key = ($aws_secret_access_key)
 
 }
 
-def destroy_kubernetes [provider: string, name = "dot"] {
+def destroy_kubernetes [provider: string, name = "dot", delete_project = true] {
 
     if $provider == "google" {
 
@@ -146,7 +155,9 @@ def destroy_kubernetes [provider: string, name = "dot"] {
                 --project $env.PROJECT_ID --zone us-east1-b --quiet
         )
 
-        gcloud projects delete $env.PROJECT_ID --quiet
+        if $delete_project {
+            gcloud projects delete $env.PROJECT_ID --quiet
+        }
     
     } else if $provider == "aws" {
 

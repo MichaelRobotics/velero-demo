@@ -6,11 +6,10 @@ source scripts/storage.nu
 let hyperscaler = $env.HYPERSCALER
 let storage_name = $env.STORAGE_NAME
 
-destroy_kubernetes $hyperscaler "dot2"
+destroy_kubernetes $hyperscaler "dot2" false
 
-if $hyperscaler != "google" {
-    destroy_kubernetes $hyperscaler "dot"
-    destroy_storage $hyperscaler $storage_name
-}
+destroy_kubernetes $hyperscaler "dot" false
+
+destroy_storage $hyperscaler $storage_name true
 
 rm --force .env
