@@ -39,9 +39,9 @@ let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
 
-let ingress_data = apply_ingress $hyperscaler "traefik" "DOT2_"
-
 apply_argocd
+
+let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
 
 (
     helm upgrade --install cnpg cloudnative-pg
@@ -55,7 +55,7 @@ apply_velero $hyperscaler $storage_data.name
 
 apply_argocd
 
-let ingress_data = apply_ingress $hyperscaler
+let ingress_data = get_ingress_data $hyperscaler
 
 open app/base/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
