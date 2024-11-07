@@ -29,13 +29,13 @@ do --ignore-errors {
 
 create_kubernetes $hyperscaler "dot2" 1 2 true
 
-apply_argocd
-
 (
     helm upgrade --install cnpg cloudnative-pg
         --repo https://cloudnative-pg.github.io/charts
         --namespace cnpg-system --create-namespace --wait
 )
+
+apply_argocd
 
 let storage_data = create_storage $hyperscaler false
 
@@ -45,13 +45,13 @@ let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
 
 create_kubernetes $hyperscaler "dot" 1 2 false
 
-apply_argocd
-
 (
     helm upgrade --install cnpg cloudnative-pg
         --repo https://cloudnative-pg.github.io/charts
         --namespace cnpg-system --create-namespace --wait
 )
+
+apply_argocd
 
 apply_velero $hyperscaler $storage_data.name
 
