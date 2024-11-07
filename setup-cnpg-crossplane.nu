@@ -27,13 +27,13 @@ do --ignore-errors {
     git push
 }
 
+create_kubernetes $hyperscaler "dot2" 1 2 true
+
 (
     helm upgrade --install cnpg cloudnative-pg
         --repo https://cloudnative-pg.github.io/charts
         --namespace cnpg-system --create-namespace --wait
 )
-
-create_kubernetes $hyperscaler "dot2" 1 2 true
 
 let storage_data = create_storage $hyperscaler false
 
