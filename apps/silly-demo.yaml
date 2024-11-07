@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/vfarcic/velero-demo
     targetRevision: HEAD
-    path: app
+    path: app/overlays/full
   destination:
     server: https://kubernetes.default.svc
     namespace: a-team
