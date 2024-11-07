@@ -19,11 +19,13 @@ open third-party/crossplane-providers.yaml
     | upsert spec.source.repoURL $git_url
     | save third-party/crossplane-providers.yaml --force
 
-git add .
+do --ignore-errors {
+    git add .
 
-git commit -m "Customizations"
+    git commit -m "Customizations"
 
-git push
+    git push
+}
 
 (
     helm upgrade --install cnpg cloudnative-pg
