@@ -15,27 +15,29 @@ open apps/silly-demo.yaml
     | upsert spec.source.repoURL $git_url
     | save apps/silly-demo.yaml --force
 
-open apps/crossplane-providers.yaml
+open third-party/crossplane-providers.yaml
     | upsert spec.source.repoURL $git_url
-    | save apps/crossplane-providers.yaml --force
+    | save third-party/crossplane-providers.yaml --force
 
-(
-    helm upgrade --install cnpg cloudnative-pg
-        --repo https://cloudnative-pg.github.io/charts
-        --namespace cnpg-system --create-namespace --wait
-)
-    
 git add .
 
 git commit -m "Customizations"
 
 git push
 
-create_kubernetes $hyperscaler "dot2" 1 2
+(
+    helm upgrade --install cnpg cloudnative-pg
+        --repo https://cloudnative-pg.github.io/charts
+        --namespace cnpg-system --create-namespace --wait
+)
 
-let storage_data = create_storage $hyperscaler
+create_kubernetes $hyperscaler "dot2" 1 2 true
+
+let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
+
+let ingress_data = apply_ingress $hyperscaler "traefik" "DOT2_"
 
 apply_argocd
 
@@ -45,13 +47,13 @@ apply_argocd
         --namespace cnpg-system --create-namespace --wait
 )
 
-create_kubernetes $hyperscaler "dot" 1 2
+create_kubernetes $hyperscaler "dot" 1 2 false
 
 apply_velero $hyperscaler $storage_data.name
 
 apply_argocd
 
-let ingress_data = get_ingress_data $hyperscaler
+let ingress_data = apply_ingress $hyperscaler
 
 open app/base/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
