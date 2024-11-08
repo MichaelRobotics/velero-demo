@@ -37,12 +37,56 @@ create_kubernetes $hyperscaler "dot2" 1 2 true
 
 apply_argocd "" false
 
+kubectl apply --filename argocd-third-party.yaml
+
+if $hyperscaler == "aws" {
+
+    (
+        kubectl --namespace crossplane-system
+            create secret generic aws-creds
+            --from-file creds=./aws-creds.conf
+    )
+
+} else {
+
+    start $"https://console.developers.google.com/apis/api/sqladmin.googleapis.com/overview?project=($env.PROJECT_ID)"
+        
+    print $"(ansi yellow_bold)
+ENABLE(ansi reset) the API.
+Press any key to continue.
+"
+    input
+
+    let sa = $"devops-toolkit@($env.PROJECT_ID).iam.gserviceaccount.com"
+    
+    (
+        gcloud iam service-accounts create devops-toolkit
+            --project $env.PROJECT_ID
+    )
+    
+    (
+        gcloud projects add-iam-policy-binding
+            --role roles/admin $env.PROJECT_ID
+            --member $"serviceAccount:($sa)"
+    )
+    
+    (
+        gcloud iam service-accounts keys
+            create gcp-creds.json
+            --project $env.PROJECT_ID --iam-account $sa
+    )
+
+    (
+        kubectl --namespace crossplane-system
+            create secret generic gcp-creds
+            --from-file creds=./gcp-creds.json
+    )
+
+}
 
 let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
-
-kubectl apply --filename argocd-third-party.yaml
 
 let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
 
@@ -98,7 +142,7 @@ curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=1&title=Video1"
 
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=2&title=Video2"
 
-if $provider == "aws" {
+if $hyperscaler == "aws" {
 
     (
         kubectl --namespace crossplane-system
@@ -108,7 +152,11 @@ if $provider == "aws" {
 
 } else {
 
-    kubectl apply --filename providers/provider-config-google.yaml
+    (
+        kubectl --namespace crossplane-system
+            create secret generic gcp-creds
+            --from-file creds=./gcp-creds.json
+    )
 
 }
 
