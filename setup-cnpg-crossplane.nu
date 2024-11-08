@@ -39,6 +39,10 @@ apply_argocd "" false
 
 kubectl apply --filename argocd-third-party.yaml
 
+let storage_data = create_storage $hyperscaler false
+
+apply_velero $hyperscaler $storage_data.name
+
 if $hyperscaler == "aws" {
 
     (
@@ -83,10 +87,6 @@ Press any key to continue.
     )
 
 }
-
-let storage_data = create_storage $hyperscaler false
-
-apply_velero $hyperscaler $storage_data.name
 
 let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
 
