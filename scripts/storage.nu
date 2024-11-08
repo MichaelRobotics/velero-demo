@@ -47,7 +47,7 @@ def create_storage [provider: string, auth = true] {
         let sa_email = $"velero@($env.PROJECT_ID).iam.gserviceaccount.com"
 
         (
-            gcloud iam roles create velero.server
+            gcloud iam roles create velero
                 --project $env.PROJECT_ID
                 --file google-permissions.yaml
         )
@@ -55,7 +55,7 @@ def create_storage [provider: string, auth = true] {
         (
             gcloud projects add-iam-policy-binding $env.PROJECT_ID
                 --member $"serviceAccount:($sa_email)"
-                --role $"projects/($env.PROJECT_ID)/roles/velero.server"
+                --role $"projects/($env.PROJECT_ID)/roles/velero"
         )
 
         (

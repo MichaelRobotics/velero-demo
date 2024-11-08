@@ -35,11 +35,18 @@ create_kubernetes $hyperscaler "dot2" 1 2 true
         --namespace cnpg-system --create-namespace --wait
 )
 
-apply_argocd "", false
+apply_argocd "" false
+
 
 let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
+
+kubectl apply --filename argocd-third-party.yaml
+
+let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
+
+apply_argocd $"argocd.($ingress_data.host)" false
 
 create_kubernetes $hyperscaler "dot" 1 2 false
 
