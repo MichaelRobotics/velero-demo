@@ -67,7 +67,7 @@ git commit -m "Customizations"
 
 git push
 
-apply_argocd $"argocd.($ingress_data.host)"
+apply_argocd $"argocd.($ingress_data.host)" false
 
 sleep 15sec
 
