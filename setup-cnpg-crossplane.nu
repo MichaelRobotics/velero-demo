@@ -88,3 +88,9 @@ sleep 5sec
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=1&title=Video1"
 
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=2&title=Video2"
+
+(
+    kubectl --namespace crossplane-system
+        create secret generic aws-creds
+        --from-file creds=./aws-creds.conf
+)

@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-def apply_argocd [host_name = "", ingress_class_name = "traefik"] {
+def apply_argocd [host_name = "", ingress_class_name = "traefik", apply_apps = true] {
 
     let git_url = git config --get remote.origin.url
 
@@ -28,8 +28,12 @@ def apply_argocd [host_name = "", ingress_class_name = "traefik"] {
             --values argocd-values.yaml --wait
     )
 
-    kubectl apply --filename argocd-apps.yaml
+    if $apply_apps {
+        
+        kubectl apply --filename argocd-apps.yaml
 
-    kubectl apply --filename argocd-third-party.yaml
+        kubectl apply --filename argocd-third-party.yaml
+
+    }
 
 }
