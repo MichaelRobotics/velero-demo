@@ -12,7 +12,7 @@ def --env create_kubernetes [provider: string, name = "dot", min_nodes = 2, max_
         }
 
         mut project_id = ""
-        if PROJECT_ID in $env {
+        if PROJECT_ID in $env and not $auth {
             $project_id = $env.PROJECT_ID
         } else {
             $project_id = $"dot-(date now | format date "%Y%m%d%H%M%S")"

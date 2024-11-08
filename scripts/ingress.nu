@@ -56,7 +56,7 @@ def apply_ingress [provider: string, type = "traefik", env_prefix = ""] {
 
 def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
 
-    sleep 60sec
+    sleep 30sec
     
     mut ingress_ip = ""
   

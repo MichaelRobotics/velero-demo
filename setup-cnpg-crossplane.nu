@@ -35,13 +35,11 @@ create_kubernetes $hyperscaler "dot2" 1 2 true
         --namespace cnpg-system --create-namespace --wait
 )
 
-apply_argocd
+apply_argocd "", false
 
 let storage_data = create_storage $hyperscaler false
 
 apply_velero $hyperscaler $storage_data.name
-
-let ingress_data = get_ingress_data $hyperscaler "traefik" "DOT2_"
 
 create_kubernetes $hyperscaler "dot" 1 2 false
 
@@ -50,6 +48,8 @@ create_kubernetes $hyperscaler "dot" 1 2 false
         --repo https://cloudnative-pg.github.io/charts
         --namespace cnpg-system --create-namespace --wait
 )
+
+apply_argocd
 
 apply_velero $hyperscaler $storage_data.name
 
