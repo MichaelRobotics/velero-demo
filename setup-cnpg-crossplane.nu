@@ -51,8 +51,6 @@ create_kubernetes $hyperscaler "dot" 1 2 false
         --namespace cnpg-system --create-namespace --wait
 )
 
-apply_argocd
-
 apply_velero $hyperscaler $storage_data.name
 
 let ingress_data = get_ingress_data $hyperscaler

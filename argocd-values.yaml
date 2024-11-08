@@ -11,6 +11,6 @@ server:
   ingress:
     enabled: true
     ingressClassName: traefik
-    hostname: ''
+    hostname: argocd.107.21.17.26.nip.io
   extraArgs:
   - --insecure
