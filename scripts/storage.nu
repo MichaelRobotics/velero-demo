@@ -169,6 +169,11 @@ def destroy_storage [provider: string, storage_name: string, delete_project = tr
     } else if $provider == "google" {
 
         (
+            gcloud iam service-accounts delete velero
+                --project $env.PROJECT_ID
+        )
+
+        (
             gcloud storage rm $"gs://($storage_name)" --recursive
                 --project $env.PROJECT_ID
         )
