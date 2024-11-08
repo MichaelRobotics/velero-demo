@@ -139,19 +139,23 @@ def destroy_storage [provider: string, storage_name: string, delete_project = tr
 
     if $provider == "aws" {
 
-        (
-            aws iam delete-access-key --user-name velero
-                --access-key-id $env.STORAGE_ACCESS_KEY_ID
-                --region us-east-1
-        )
+        do --ignore-errors {
+            
+            (
+                aws iam delete-access-key --user-name velero
+                    --access-key-id $env.STORAGE_ACCESS_KEY_ID
+                    --region us-east-1
+            )
 
-        (
-            aws iam delete-user-policy --user-name velero
-                --policy-name velero
-                --region us-east-1
-        )
+            (
+                aws iam delete-user-policy --user-name velero
+                    --policy-name velero
+                    --region us-east-1
+            )
 
-        aws iam delete-user --user-name velero
+            aws iam delete-user --user-name velero
+
+        }
 
         (        
             aws s3 rm $"s3://($storage_name)" --recursive

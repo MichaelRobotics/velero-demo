@@ -62,7 +62,7 @@ def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
   
     if $provider == "aws" {
 
-        sleep 10sec
+        sleep 30sec
 
         let ingress_hostname = (
             kubectl --namespace traefik
