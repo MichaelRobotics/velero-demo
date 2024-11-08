@@ -66,6 +66,10 @@ open app/base/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
     | save app/base/ingress.yaml --force
 
+open crossplane-provider-configs/config-google.yaml
+    | upsert spec.projectID $env.PROJECT_ID
+    | save crossplane-provider-configs/config-google.yaml --force
+
 git add .
 
 git commit -m "Customizations"
@@ -94,11 +98,19 @@ curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=1&title=Video1"
 
 curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=2&title=Video2"
 
-(
-    kubectl --namespace crossplane-system
-        create secret generic aws-creds
-        --from-file creds=./aws-creds.conf
-)
+if $provider == "aws" {
+
+    (
+        kubectl --namespace crossplane-system
+            create secret generic aws-creds
+            --from-file creds=./aws-creds.conf
+    )
+
+} else {
+
+    kubectl apply --filename providers/provider-config-google.yaml
+
+}
 
 (
     kubectl --namespace infra apply
