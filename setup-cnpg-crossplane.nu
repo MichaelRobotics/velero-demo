@@ -110,9 +110,13 @@ open app/base/ingress.yaml
     | upsert spec.rules.0.host $"silly-demo.($ingress_data.host)"
     | save app/base/ingress.yaml --force
 
-open crossplane-provider-configs/config-google.yaml
-    | upsert spec.projectID $env.PROJECT_ID
-    | save crossplane-provider-configs/config-google.yaml --force
+if $hyperscaler == "google" {
+
+    open crossplane-provider-configs/config-google.yaml
+        | upsert spec.projectID $env.PROJECT_ID
+        | save crossplane-provider-configs/config-google.yaml --force
+    
+}
 
 git add .
 
