@@ -94,3 +94,8 @@ curl -X POST $"http://silly-demo.($ingress_data.host)/video?id=2&title=Video2"
         create secret generic aws-creds
         --from-file creds=./aws-creds.conf
 )
+
+(
+    kubectl --namespace infra apply
+        --filename $"infra/($hyperscaler).yaml"
+)

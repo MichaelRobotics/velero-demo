@@ -61,6 +61,9 @@ def get_ingress_data [provider: string, type = "traefik", env_prefix = ""] {
     mut ingress_ip = ""
   
     if $provider == "aws" {
+
+        sleep 10sec
+
         let ingress_hostname = (
             kubectl --namespace traefik
                 get service traefik --output yaml

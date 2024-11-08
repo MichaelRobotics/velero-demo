@@ -161,16 +161,16 @@ def destroy_kubernetes [provider: string, name = "dot", delete_project = true] {
     
     } else if $provider == "aws" {
 
-        # (
-        #     eksctl delete addon --name aws-ebs-csi-driver
-        #         --cluster $name --region us-east-1
-        # )
+        (
+            eksctl delete addon --name aws-ebs-csi-driver
+                --cluster $name --region us-east-1
+        )
 
-        # (
-        #     eksctl delete nodegroup --name primary
-        #         --cluster $name --drain=false
-        #         --region us-east-1 --wait
-        # )
+        (
+            eksctl delete nodegroup --name primary
+                --cluster $name --drain=false
+                --region us-east-1 --wait
+        )
 
         (
             eksctl delete cluster
