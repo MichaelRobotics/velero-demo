@@ -12,7 +12,8 @@
     "jq@1.7.1",
     "crossplane-cli@1.17.1",
     "path:gcloud#google-cloud-sdk",
-    "azure-cli@2.64.0"
+    "azure-cli@2.64.0",
+    "zellij@0.40.1"
   ],
   "shell": {
     "init_hook": [],

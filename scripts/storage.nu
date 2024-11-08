@@ -140,7 +140,6 @@ def destroy_storage [provider: string, storage_name: string, delete_project = tr
     if $provider == "aws" {
 
         do --ignore-errors {
-            
             (
                 aws iam delete-access-key --user-name velero
                     --access-key-id $env.STORAGE_ACCESS_KEY_ID
@@ -154,7 +153,7 @@ def destroy_storage [provider: string, storage_name: string, delete_project = tr
             )
 
             aws iam delete-user --user-name velero
-
+            
         }
 
         (        
