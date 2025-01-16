@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/velero-demo
+    repoURL: git@github.com:MichaelRobotics/velero-demo.git
     targetRevision: HEAD
     path: crossplane-providers
   destination:
